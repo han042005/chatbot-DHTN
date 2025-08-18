@@ -236,3 +236,26 @@ app.get('/co-cau-to-chuc', (req, res) => {
 // ================== START SERVER ==================
 const PORT = 3000;
 app.listen(PORT, () => console.log(`🚀 Server chạy tại http://localhost:${PORT}`));
+// ========================= CHAT==========================
+// server.js
+// server.js
+const { spawn } = require("child_process");
+
+
+
+const py = spawn("python", [
+  "-m", "uvicorn",
+  "chat_ai:app",
+  "--host", "127.0.0.1",
+  "--port", String(PORT),
+  "--reload"
+], {
+  env: { ...process.env, PYTHONIOENCODING: "utf-8" }
+});
+
+py.stdout.setEncoding("utf8");
+py.stderr.setEncoding("utf8");
+
+py.stdout.on("data", d => process.stdout.write(`PYTHON: ${d}`));
+py.stderr.on("data", d => process.stderr.write(`PYTHON ERR: ${d}`));
+py.on("close", code => console.log(`Python process exited with code ${code}`));

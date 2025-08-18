@@ -1,4 +1,14 @@
 # chat_ai.py
+import os, sys, io
+os.environ["PYTHONIOENCODING"] = "utf-8"
+if os.name == "nt":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        sys.stdout = io.TextIOWrapper(getattr(sys.stdout, "buffer", sys.stdout.detach()), encoding="utf-8", errors="replace")
+        sys.stderr = io.TextIOWrapper(getattr(sys.stderr, "buffer", sys.stderr.detach()), encoding="utf-8", errors="replace")
+
 import mysql.connector
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,22 +16,17 @@ from pydantic import BaseModel
 from rapidfuzz import process
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import JSONResponse
 
-# ====== Cấu hình MySQL ======
 DB_CFG = {
     "host": "127.0.0.1",
     "port": 3306,
     "user": "root",
-    "password": "",          # không có mật khẩu thì để rỗng
-    "database": "library_chatbot",   # đổi đúng tên DB của bạn
-    # "auth_plugin": "mysql_native_password",  # bật nếu user dùng plugin này
+    "password": "",
+    "database": "library_chatbot",
 }
 
-# ====== App ======
 app = FastAPI(title="Library Chatbot API", version="1.0")
-
-# CORS: cho mọi origin, KHÔNG credentials khi dùng "*"
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -30,7 +35,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ====== DB helpers ======
 def load_faqs():
     cnx = mysql.connector.connect(**DB_CFG)
     cur = cnx.cursor()
@@ -42,36 +46,42 @@ def load_faqs():
     answers = [r[2] for r in rows]
     return ids, questions, answers
 
-# ====== Model & data ======
 try:
     faq_ids, questions, answers = load_faqs()
-    print("Kết nối DB & tải FAQ: OK -", len(questions), "câu")
+    print("DB connected & FAQs loaded:", len(questions))
 except Exception as e:
-    print("Lỗi load_faqs:", e)
+    print("load_faqs error:", e)
     faq_ids, questions, answers = [], [], []
 
 embed_model = SentenceTransformer("all-MiniLM-L6-v2")
 question_embeddings = embed_model.encode(questions) if questions else []
 
 FUZZY_THRESHOLD = 85
-SEMANTIC_THRESHOLD = 0.60
+SEMANTIC_THRESHOLD = 0.65
 
 def answer_from_db(user_question: str) -> str:
     if not questions:
         return "Hiện chưa có dữ liệu trong hệ thống."
+
+    q = user_question.strip()
+
     # Fuzzy
-    match, score, idx = process.extractOne(user_question, questions)
-    if score >= FUZZY_THRESHOLD:
-        return answers[idx]
+    m = process.extractOne(q, questions)
+    if m is not None:
+        _, fuzzy_score, fuzzy_idx = m
+        if fuzzy_score >= FUZZY_THRESHOLD:
+            return answers[fuzzy_idx]
+
     # Semantic
-    user_emb = embed_model.encode([user_question])
+    user_emb = embed_model.encode([q])
     sims = cosine_similarity(user_emb, question_embeddings)[0]
     best_idx = int(sims.argmax())
-    if sims[best_idx] >= SEMANTIC_THRESHOLD:
+    best_score = float(sims[best_idx])
+    if best_score >= SEMANTIC_THRESHOLD:
         return answers[best_idx]
+
     return "Xin lỗi, tôi không tìm thấy thông tin phù hợp trong cơ sở dữ liệu."
 
-# ====== Schemas ======
 class ChatRequest(BaseModel):
     question: str
 
@@ -79,7 +89,6 @@ class AddFAQ(BaseModel):
     question: str
     answer: str
 
-# ====== Endpoints ======
 @app.post("/chat")
 def chat(req: ChatRequest):
     return {"answer": answer_from_db(req.question)}
@@ -90,7 +99,6 @@ def add_faq(item: AddFAQ):
     cur = cnx.cursor()
     cur.execute("INSERT INTO faqs (question, answer) VALUES (%s, %s)", (item.question, item.answer))
     cnx.commit(); cur.close(); cnx.close()
-    # reload embeddings
     global faq_ids, questions, answers, question_embeddings
     faq_ids, questions, answers = load_faqs()
     question_embeddings = embed_model.encode(questions) if questions else []
@@ -105,11 +113,8 @@ def reload_data():
 
 @app.get("/", include_in_schema=False)
 def root():
-    # chọn 1 trong 2:
-    # return RedirectResponse("/docs")
     return JSONResponse({"message": "Library Chatbot API up. Try POST /chat or open /docs."})
 
-# Cho phép: python chat_ai.py
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("chat_ai:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("chat_ai:app", host="127.0.0.1", port=3000, reload=True)

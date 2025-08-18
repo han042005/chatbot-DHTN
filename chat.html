@@ -24,9 +24,7 @@
   </form>
 
   <script>
-    // Nếu đổi cổng API, sửa ở đây
-    const API = "http://127.0.0.1:8000/chat";
-
+    const API = "http://127.0.0.1:3000/chat";
     const log = document.getElementById("log");
     const f = document.getElementById("f");
     const q = document.getElementById("q");
@@ -45,16 +43,26 @@
       if (!question) return;
       line("You: " + question, "me");
       q.value = "";
+
       try {
         const res = await fetch(API, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ question }),
         });
+
+        if (!res.ok) {
+          const text = await res.text();
+          line(`Lỗi API: HTTP ${res.status} ${res.statusText} - ${text}`, "bot");
+          console.error("API error", res.status, text);
+          return;
+        }
+
         const data = await res.json();
         line("Bot: " + (data.answer ?? JSON.stringify(data)), "bot");
       } catch (err) {
         line("Lỗi gọi API: " + err, "bot");
+        console.error(err);
       }
     });
   </script>
