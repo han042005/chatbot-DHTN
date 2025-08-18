@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thư viện - Trang chủ</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+    <!-- MENU -->
+    <header>
+        <nav>
+            <ul class="menu">
+                <li><a href="home.html">Trang chủ</a></li>
+                <li><a href="#">Chatbot</a></li>
+                <li><a href="#">Liên hệ</a></li>
+                <li><a href="#">Tài khoản</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- BANNER + TÌM KIẾM -->
+    <section class="banner">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm sách...">
+            <button id="searchBtn">🔍</button>
+        </div>
+    </section>
+
+    <!-- CÁC ĐẦU SÁCH -->
+    <section class="section-container">
+        <h2>Các đầu sách</h2>
+        <div id="categoryList" class="categories"></div>
+    </section>
+
+    <script src="home.js"></script>
+</body>
+</html>

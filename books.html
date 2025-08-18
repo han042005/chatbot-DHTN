@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sách</title>
+    <link rel="stylesheet" href="books.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul class="menu">
+                <li><a href="home.html">Trang chủ</a></li>
+                <li><a href="#">Chatbot</a></li>
+                <li><a href="#">Liên hệ</a></li>
+                <li><a href="#">Tài khoản</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="book-container">
+        <h2 id="bookTitle"></h2>
+
+        <!-- Thanh tìm kiếm -->
+        <div class="search-box">
+            <input type="text" id="searchBook" placeholder="Tìm sách theo tên hoặc tác giả...">
+            <button id="searchBtn">🔍</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tên sách</th>
+                    <th>Tác giả</th>
+                    <th>Năm xuất bản</th>
+                    <th>Số lượng tồn</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="bookTableBody"></tbody>
+        </table>
+    </section>
+
+    <script src="books.js"></script>
+</body>
+</html>

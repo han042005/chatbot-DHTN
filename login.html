@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập sinh viên</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="slogan">
+        <img src="login.png" alt="Slogan">
+    </div>
+    <div class="login-container">
+        <!-- Hình minh họa -->
+        <div class="login-image">
+            <img src="https://i.pinimg.com/1200x/0c/9b/89/0c9b89b62ba04b4b4740f4ce2da28b54.jpg" alt="Login Illustration">
+        </div>
+
+        <!-- Form đăng nhập -->
+        <div class="login-form">
+            <h2>Sign in</h2>
+            <label for="ma_sv">Nhập mã sinh viên/giảng viên:</label>
+            <input type="text" id="ma_sv" placeholder="23103001">
+            <label for="mat_khau">Nhập mật khẩu:</label>
+            <input type="password" id="mat_khau" placeholder="123456789">
+            <button id="btnLogin">Đăng nhập</button>
+            <p id="message"></p>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>
