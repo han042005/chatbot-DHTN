@@ -240,9 +240,6 @@ app.listen(PORT, () => console.log(`🚀 Server chạy tại http://localhost:${
 // server.js
 // server.js
 const { spawn } = require("child_process");
-
-
-
 const py = spawn("python", [
   "-m", "uvicorn",
   "chat_ai:app",
@@ -259,3 +256,10 @@ py.stderr.setEncoding("utf8");
 py.stdout.on("data", d => process.stdout.write(`PYTHON: ${d}`));
 py.stderr.on("data", d => process.stderr.write(`PYTHON ERR: ${d}`));
 py.on("close", code => console.log(`Python process exited with code ${code}`));
+
+// ===sachy
+app.get("/goi-y", async (req, res) => {
+  const [rows] = await db.query("SELECT ten_sach, tac_gia, so_luong_ton FROM books");
+  res.send(formatBooksTableHTML(rows));
+});
+
