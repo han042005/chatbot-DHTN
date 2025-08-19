@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th8 17, 2025 lúc 05:03 PM
+-- Thời gian đã tạo: Th8 19, 2025 lúc 04:28 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -43,7 +43,7 @@ CREATE TABLE `sinh_vien` (
 --
 
 INSERT INTO `sinh_vien` (`id`, `ma_sv`, `mat_khau`, `email`, `so_sach_da_muon`, `so_sach_dang_muon`, `so_sach_da_tra`, `so_sach_qua_han`) VALUES
-(1, '23103097', '123456', '23103097@sv.ttn.edu.vn', 15, 10, 4, 0),
+(1, '23103097', '123456', '23103097@sv.ttn.edu.vn', 22, 11, 7, 0),
 (2, '23103054', 'abcdef', '23103054@sv.ttn.edu.vn', 3, 0, 3, 0),
 (3, '23103071', 'pass123', '23103071@sv.ttn.edu.vn', 8, 2, 6, 1);
 

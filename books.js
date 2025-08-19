@@ -46,21 +46,30 @@ function renderBooks(books) {
 }
 function borrowBook(ten_sach) {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (!currentUser) {
+    if (!currentUser || !currentUser.ma) {
         alert("❌ Vui lòng đăng nhập trước khi mượn sách!");
+        window.location.href = "login.html"; // Chuyển hướng về trang đăng nhập
         return;
     }
 
     // Xác định ma_sv hoặc ma_gv dựa vào role
     let ma_sv = null;
     let ma_gv = null;
-    if (currentUser.role === "sinh_vien") ma_sv = currentUser.ma;
-    if (currentUser.role === "giang_vien") ma_gv = currentUser.ma;
+    if (currentUser.role === "sinh_vien") {
+        ma_sv = currentUser.ma;
+    } else if (currentUser.role === "giang_vien") {
+        ma_gv = currentUser.ma;
+    } else {
+        alert("❌ Lỗi: Vai trò người dùng không hợp lệ!");
+        return;
+    }
 
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     const han_tra = new Date();
     han_tra.setDate(han_tra.getDate() + 7); // Hạn trả 7 ngày
     const hanTraStr = han_tra.toISOString().split("T")[0];
+
+    console.log("Body gửi đi:", { ma_sv, ma_gv, ten_sach, ngay_muon: today, han_tra: hanTraStr }); // Debug
 
     fetch("/phieu-muon", {
         method: "POST",
@@ -71,7 +80,6 @@ function borrowBook(ten_sach) {
     .then(data => {
         if (data.success) {
             alert("✅ Mượn sách thành công!");
-            // Cập nhật lại số lượng tồn
             const book = allBooks.find(b => b.ten_sach === ten_sach);
             if (book) book.so_luong_ton -= 1;
             renderBooks(allBooks);
@@ -79,7 +87,10 @@ function borrowBook(ten_sach) {
             alert("❌ Lỗi: " + data.message);
         }
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+        console.error("Lỗi khi mượn sách:", err);
+        alert("❌ Lỗi kết nối server!");
+    });
 }
 
 

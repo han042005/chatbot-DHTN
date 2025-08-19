@@ -101,6 +101,9 @@ app.post('/phieu-muon', (req, res) => {
     if (!ten_sach || !ngay_muon || !han_tra) {
         return res.status(400).json({ success: false, message: 'Thiếu thông tin bắt buộc' });
     }
+    if (!ma_sv && !ma_gv) {
+        return res.status(400).json({ success: false, message: 'Phải cung cấp ma_sv hoặc ma_gv' });
+    }
 
     // 1. Tìm sách theo tên
 const sqlFindBook = `SELECT id, so_luong_ton, tac_gia, nam_xuat_ban FROM sach WHERE ten_sach = ? LIMIT 1`;
@@ -211,7 +214,14 @@ app.post('/phieu-muon/tra/:id', (req, res) => {
             db.query('UPDATE sach SET so_luong_ton = so_luong_ton + 1 WHERE id = ?', [phieu.id_sach], (err3) => {
                 if (err3) return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật kho sách', error: err3.sqlMessage });
 
-                res.json({ success: true, message: 'Trả sách thành công' });
+                // 4. Lấy thông tin thống kê người dùng
+                const table = phieu.ma_sv ? 'sinh_vien' : 'giang_vien';
+                const ma = phieu.ma_sv || phieu.ma_gv;
+                db.query(`SELECT so_sach_da_muon, so_sach_dang_muon, so_sach_da_tra, so_sach_qua_han FROM ${table} WHERE ${phieu.ma_sv ? 'ma_sv' : 'ma_gv'} = ?`, [ma], (err4, stats) => {
+                    if (err4) return res.status(500).json({ success: false, message: 'Lỗi khi lấy thống kê', error: err4.sqlMessage });
+
+                    res.json({ success: true, message: 'Trả sách thành công', stats: stats[0] });
+                });
             });
         });
     });
