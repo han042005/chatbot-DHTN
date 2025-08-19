@@ -18,5 +18,5 @@ CREATE INDEX `idx_sach_timestamp` ON `sach_s` (`created_at`, `updated_at`);
 -- Kiểm tra dữ liệu trong 2 phút gần nhất
 SELECT * 
 FROM `sach_s`
-WHERE COALESCE(`updated_at`, `created_at`) >= NOW() - INTERVAL 2 MINUTE
+WHERE COALESCE(`updated_at`, `created_at`) >= NOW() - INTERVAL 15 MINUTE
 ORDER BY COALESCE(`updated_at`, `created_at`) DESC;

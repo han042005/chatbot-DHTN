@@ -19,5 +19,35 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => console.error("Lỗi tải ngành:", err));
 });
 
+function renderThongBao(list) {
+  const wrap = document.getElementById('thongBaoContainer');
+  if (!wrap) return;
+
+  wrap.innerHTML = ''; // nếu muốn chồng nhiều thông báo cũ, bỏ dòng này
+
+  list.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'notify-item';
+    el.id = item.id;
+
+    el.innerHTML = `
+      <div class="notify-text">${item.text}</div>
+      <button class="notify-close" aria-label="Đóng">&times;</button>
+    `;
+
+    // nút đóng
+    el.querySelector('.notify-close').addEventListener('click', () => {
+      el.remove();
+    });
+
+    wrap.appendChild(el);
+
+    // tự ẩn sau 6 giây (tuỳ chỉnh)
+    setTimeout(() => el.remove(), 6000);
+  });
+}
+
+// … sau khi bạn đã có mảng `thongBao`:
+renderThongBao(thongBao);
 
 

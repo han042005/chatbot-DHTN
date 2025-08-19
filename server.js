@@ -396,7 +396,7 @@ app.get("/api/thong-bao-sach", (req, res) => {
         SELECT id, ten_sach, tac_gia, nam_xuat_ban, so_luong_ton,
                created_at, updated_at
         FROM sach_s
-        WHERE COALESCE(updated_at, created_at) >= NOW() - INTERVAL 30 SECOND
+        WHERE COALESCE(updated_at, created_at) >= NOW() - INTERVAL 60 SECOND
         ORDER BY COALESCE(updated_at, created_at) DESC
         LIMIT 10
       `;

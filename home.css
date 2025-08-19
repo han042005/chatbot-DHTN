@@ -72,3 +72,52 @@ header {
 }
 
 
+/* Khung chứa nhiều thông báo (stack) */
+.notify {
+  position: absolute;
+  top: 10px;        /* đúng vùng bạn đánh số 1 */
+  right: 20px;      /* sát phải */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+  max-width: 480px;
+}
+
+/* Một thông báo đơn */
+.notify-item {
+  background: #fff;
+  border-left: 4px solid #4caf50;
+  box-shadow: 0 6px 20px rgba(0,0,0,.1);
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* nút đóng */
+.notify-close {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+  opacity: .6;
+}
+.notify-close:hover { opacity: 1; }
+
+/* hiệu ứng vào/ra */
+.notify-item {
+  transform: translateY(-8px);
+  opacity: 0;
+  animation: slideIn .25s ease-out forwards;
+}
+@keyframes slideIn {
+  to { transform: translateY(0); opacity: 1; }
+}
+
+
