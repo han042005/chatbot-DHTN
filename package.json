@@ -9,10 +9,19 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/han042005/chatbot-DHTN.git"
+  },
+  "bugs": {
+    "url": "https://github.com/han042005/chatbot-DHTN/issues"
+  },
+  "homepage": "https://github.com/han042005/chatbot-DHTN#readme",
+  "description": ""
 }

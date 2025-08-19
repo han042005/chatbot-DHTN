@@ -6,7 +6,9 @@
 -- Thời gian đã tạo: Th8 17, 2025 lúc 05:03 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
+USE `library_chatbot`;
 
+DROP TABLE IF EXISTS `sach_s`;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -27,7 +29,7 @@ SET time_zone = "+00:00";
 -- Cấu trúc bảng cho bảng `sach`
 --
 
-CREATE TABLE `sach` (
+CREATE TABLE `sach_s` (
   `id` int(11) NOT NULL,
   `ten_sach` varchar(255) NOT NULL,
   `tac_gia` varchar(255) DEFAULT NULL,
@@ -40,7 +42,7 @@ CREATE TABLE `sach` (
 -- Đang đổ dữ liệu cho bảng `sach`
 --
 
-INSERT INTO `sach` (`id`, `ten_sach`, `tac_gia`, `nam_xuat_ban`, `so_luong_ton`, `id_nganh`) VALUES
+INSERT INTO `sach_s` (`id`, `ten_sach`, `tac_gia`, `nam_xuat_ban`, `so_luong_ton`, `id_nganh`) VALUES
 (1, 'Cấu trúc dữ liệu và giải thuật', 'Nguyễn Thanh Tùng', '2020', 2, 1),
 (2, 'Trí tuệ nhân tạo – Nguyên lý và ứng dụng', 'Trần Minh Hoàng', '2021', 8, 1),
 (3, 'Lập trình Python cơ bản', 'Lê Thị Bích Hạnh', '2019', 15, 1),
@@ -249,7 +251,7 @@ INSERT INTO `sach` (`id`, `ten_sach`, `tac_gia`, `nam_xuat_ban`, `so_luong_ton`,
 --
 -- Chỉ mục cho bảng `sach`
 --
-ALTER TABLE `sach`
+ALTER TABLE `sach_s`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_nganh` (`id_nganh`);
 
@@ -260,7 +262,7 @@ ALTER TABLE `sach`
 --
 -- AUTO_INCREMENT cho bảng `sach`
 --
-ALTER TABLE `sach`
+ALTER TABLE `sach_s`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=201;
 
 --
@@ -270,10 +272,14 @@ ALTER TABLE `sach`
 --
 -- Các ràng buộc cho bảng `sach`
 --
-ALTER TABLE `sach`
+ALTER TABLE `sach_s`
   ADD CONSTRAINT `sach_ibfk_1` FOREIGN KEY (`id_nganh`) REFERENCES `nganh_hoc` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+
+

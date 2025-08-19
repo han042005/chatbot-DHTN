@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const categoryList = document.getElementById("categoryList");
 
     // Lấy danh sách ngành học
-    fetch("/nganh-hoc")
+   fetch(api("/nganh-hoc"))
         .then(res => res.json())
         .then(data => {
             data.forEach(nganh => {
@@ -18,3 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => console.error("Lỗi tải ngành:", err));
 });
+
+
+

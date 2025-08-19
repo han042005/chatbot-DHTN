@@ -1,9 +1,22 @@
+
+
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
+const cors = require('cors');
+
 const app = express();
+
+// Middleware
+app.use(cors({
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://127.0.0.1:3000', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept']
+}));
 app.use(express.json());
 app.use(express.static(__dirname));
+
+
 // ================== KẾT NỐI MYSQL ==================
 const db = mysql.createConnection({
     host: 'localhost',
@@ -35,7 +48,7 @@ app.get('/nganh-hoc', (req, res) => {
 
 // ================== SÁCH ==================
 app.get('/sach', (req, res) => {
-    db.query('SELECT * FROM sach', (err, results) => {
+    db.query('SELECT * FROM sach_s', (err, results) => {
         if (err) throw err;
         res.json(results);
     });
@@ -43,11 +56,13 @@ app.get('/sach', (req, res) => {
 
 app.get('/sach/nganh/:id_nganh', (req, res) => {
     const { id_nganh } = req.params;
-    db.query('SELECT * FROM sach WHERE id_nganh = ?', [id_nganh], (err, results) => {
+    db.query('SELECT * FROM sach_s WHERE id_nganh = ?', [id_nganh], (err, results) => {
         if (err) throw err;
         res.json(results);
     });
 });
+
+
 
 // ================== PHIẾU MƯỢN ==================
 
@@ -70,7 +85,7 @@ app.get('/phieu-muon/sinh-vien/:ma_sv', (req, res) => {
     const sql = `
         SELECT pm.*, s.tac_gia, s.nam_xuat_ban
         FROM phieu_muon pm
-        JOIN sach s ON pm.id_sach = s.id
+        JOIN sach_s s ON pm.id_sach = s.id
         WHERE pm.ma_sv = ?
     `;
     db.query(sql, [ma_sv], (err, results) => {
@@ -85,7 +100,7 @@ app.get('/phieu-muon/giang-vien/:ma_gv', (req, res) => {
     const sql = `
         SELECT pm.*, s.tac_gia, s.nam_xuat_ban
         FROM phieu_muon pm
-        JOIN sach s ON pm.id_sach = s.id
+        JOIN sach_s s ON pm.id_sach = s.id
         WHERE pm.ma_gv = ?
     `;
     db.query(sql, [ma_gv], (err, results) => {
@@ -128,7 +143,7 @@ const sqlFindBook = `SELECT id, so_luong_ton, tac_gia, nam_xuat_ban FROM sach WH
             const sqlDetail = `
                 SELECT pm.*, s.tac_gia, s.nam_xuat_ban
                 FROM phieu_muon pm
-                JOIN sach s ON pm.id_sach = s.id
+                JOIN sach_s s ON pm.id_sach_s = s.id
                 WHERE pm.id = ?
             `;
             db.query(sqlDetail, [result.insertId], (err3, detail) => {
@@ -208,7 +223,7 @@ app.post('/phieu-muon/tra/:id', (req, res) => {
             if (err2) return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật phiếu mượn', error: err2.sqlMessage });
 
             // 3. Tăng lại số lượng tồn của sách
-            db.query('UPDATE sach SET so_luong_ton = so_luong_ton + 1 WHERE id = ?', [phieu.id_sach], (err3) => {
+            db.query('UPDATE sach_s SET so_luong_ton = so_luong_ton + 1 WHERE id = ?', [phieu.id_sach], (err3) => {
                 if (err3) return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật kho sách', error: err3.sqlMessage });
 
                 res.json({ success: true, message: 'Trả sách thành công' });
@@ -236,3 +251,198 @@ app.get('/co-cau-to-chuc', (req, res) => {
 // ================== START SERVER ==================
 const PORT = 3000;
 app.listen(PORT, () => console.log(`🚀 Server chạy tại http://localhost:${PORT}`));
+
+// ================== ADMIN API ==================
+
+// API thêm sách mới (chỉ dành cho admin)
+app.post('/admin/add-book', (req, res) => {
+    const { ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh } = req.body;
+    
+    if (!ten_sach || !tac_gia || !nam_xuat_ban || !so_luong_ton || !id_nganh) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Thiếu thông tin bắt buộc: tên sách, tác giả, năm xuất bản, số lượng, ngành học' 
+        });
+    }
+
+    // Kiểm tra xem bảng có cột timestamp không
+    const checkTimestampSql = `
+        SELECT COLUMN_NAME 
+        FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_SCHEMA = 'library_chatbot' 
+        AND TABLE_NAME = 'sach_s' 
+        AND COLUMN_NAME IN ('created_at', 'updated_at')
+    `;
+    
+    db.query(checkTimestampSql, (err, columns) => {
+        if (err) {
+            console.error('Lỗi kiểm tra cột timestamp:', err);
+            // Fallback: thêm sách không có timestamp
+            return insertBookWithoutTimestamp(req, res);
+        }
+        
+        const hasTimestamp = columns.length >= 2;
+        
+        if (hasTimestamp) {
+            // Thêm sách với timestamp
+            const sql = `
+                INSERT INTO sach_s (ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+            `;
+            
+            db.query(sql, [ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh], (err, result) => {
+                if (err) {
+                    console.error('Lỗi thêm sách:', err);
+                    return res.status(500).json({ 
+                        success: false, 
+                        message: 'Lỗi khi thêm sách vào cơ sở dữ liệu',
+                        error: err.sqlMessage 
+                    });
+                }
+                
+                // Lấy thông tin sách vừa thêm
+                const newBookId = result.insertId;
+                db.query('SELECT * FROM sach_s WHERE id = ?', [newBookId], (err2, books) => {
+                    if (err2) {
+                        return res.status(500).json({ 
+                            success: false, 
+                            message: 'Thêm sách thành công nhưng không lấy được thông tin chi tiết' 
+                        });
+                    }
+                    
+                    const newBook = books[0];
+                    console.log(`✅ Admin đã thêm sách mới: ${newBook.ten_sach} (ID: ${newBook.id})`);
+                    
+                    res.json({ 
+                        success: true, 
+                        message: 'Thêm sách thành công!',
+                        data: newBook
+                    });
+                });
+            });
+        } else {
+            // Fallback: thêm sách không có timestamp
+            insertBookWithoutTimestamp(req, res);
+        }
+    });
+});
+
+// Hàm fallback khi không có timestamp
+function insertBookWithoutTimestamp(req, res) {
+    const { ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh } = req.body;
+    
+    const sql = `
+        INSERT INTO sach_s (ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh) 
+        VALUES (?, ?, ?, ?, ?)
+    `;
+    
+    db.query(sql, [ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh], (err, result) => {
+        if (err) {
+            console.error('Lỗi thêm sách:', err);
+            return res.status(500).json({ 
+                success: false, 
+                message: 'Lỗi khi thêm sách vào cơ sở dữ liệu',
+                error: err.sqlMessage 
+            });
+        }
+        
+        // Lấy thông tin sách vừa thêm
+        const newBookId = result.insertId;
+        db.query('SELECT * FROM sach_s WHERE id = ?', [newBookId], (err2, books) => {
+            if (err2) {
+                return res.status(500).json({ 
+                    success: false, 
+                    message: 'Thêm sách thành công nhưng không lấy được thông tin chi tiết' 
+                });
+            }
+            
+            const newBook = books[0];
+            console.log(`✅ Admin đã thêm sách mới: ${newBook.ten_sach} (ID: ${newBook.id})`);
+            
+            res.json({ 
+                success: true, 
+                message: 'Thêm sách thành công!',
+                data: newBook
+            });
+        });
+    });
+}
+
+// ================== THÔNG BÁO SÁCH MỚI ==================
+
+// API lấy sách mới nhập hoặc tăng tồn
+app.get("/api/thong-bao-sach", (req, res) => {
+  // Kiểm tra xem bảng có cột timestamp không
+  const checkTimestampSql = `
+    SELECT COLUMN_NAME 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_SCHEMA = 'library_chatbot' 
+    AND TABLE_NAME = 'sach_s' 
+    AND COLUMN_NAME IN ('created_at', 'updated_at')
+  `;
+  
+  db.query(checkTimestampSql, (err, columns) => {
+    if (err) {
+      console.error('Lỗi kiểm tra cột timestamp:', err);
+      // Fallback: trả về sách có số lượng tồn > 0
+      return getBooksWithoutTimestamp(res);
+    }
+    
+    const hasTimestamp = columns.length >= 2;
+    
+    if (hasTimestamp) {
+      // Sử dụng timestamp để lấy sách mới (trong 30 giây gần nhất)
+      const sql = `
+        SELECT id, ten_sach, tac_gia, nam_xuat_ban, so_luong_ton,
+               created_at, updated_at
+        FROM sach_s
+        WHERE COALESCE(updated_at, created_at) >= NOW() - INTERVAL 30 SECOND
+        ORDER BY COALESCE(updated_at, created_at) DESC
+        LIMIT 10
+      `;
+      
+      db.query(sql, (err, books) => {
+        if (err) {
+          console.error('Lỗi lấy thông báo sách với timestamp:', err);
+          return getBooksWithoutTimestamp(res);
+        }
+        
+        const thongBao = books.map(b => ({
+          id: `book-${b.id}`,
+          text: `📚 Sách mới: "${b.ten_sach}" - ${b.tac_gia} (năm ${b.nam_xuat_ban}) đã được thêm vào thư viện!`,
+        }));
+        
+        res.json({ success: true, thongBao });
+      });
+    } else {
+      // Fallback: trả về sách có số lượng tồn > 0
+      getBooksWithoutTimestamp(res);
+    }
+  });
+});
+
+// Hàm fallback khi không có timestamp
+function getBooksWithoutTimestamp(res) {
+  const sql = `
+    SELECT id, ten_sach, tac_gia, nam_xuat_ban, so_luong_ton
+    FROM sach_s
+    WHERE so_luong_ton > 0
+    ORDER BY id DESC
+    LIMIT 10
+  `;
+  
+  db.query(sql, (err, books) => {
+    if (err) {
+      console.error('Lỗi lấy thông báo sách:', err);
+      return res.status(500).json({ success: false, message: "Lỗi server" });
+    }
+
+    const thongBao = books.map(b => ({
+      id: `book-${b.id}`,
+      text: `📚 Sách: ${b.ten_sach} — ${b.tac_gia} (năm ${b.nam_xuat_ban}). SL: ${b.so_luong_ton}`,
+    }));
+
+    res.json({ success: true, thongBao });
+  });
+}
+

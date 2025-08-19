@@ -25,22 +25,23 @@ header {
     font-weight: bold;
 }
 
-/* BOOK TABLE */
-.book-container {
-    padding: 20px;
+
+
+
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+    .search-box {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .search-box input {
+        width: 100%;
+    }
+    
+    .search-box button {
+        width: 100%;
+    }
 }
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: white;
-}
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-th {
-    background: #007BFF;
-    color: white;
-}
+
