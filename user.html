@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin tài khoản</title>
+    <link rel="stylesheet" href="user.css">
+</head>
+<body>
+    <!-- MENU -->
+    <header>
+        <nav>
+            <ul class="menu">
+                <li><a href="home.html">Trang chủ</a></li>
+                <li><a href="#">Chatbot</a></li>
+                <li><a href="#">Liên hệ</a></li>
+                <li><a href="user.html">Tài khoản</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- THÔNG TIN TÀI KHOẢN -->
+    <section class="user-info">
+        <h2>Thông tin tài khoản</h2>
+        <div id="userDetails">
+            <p><strong>Mã:</strong> <span id="userMa"></span></p>
+            <p><strong>Email:</strong> <span id="userEmail"></span></p>
+            <p><strong>Số sách đã mượn:</strong> <span id="totalBorrowed"></span></p>
+            <p><strong>Số sách đang mượn:</strong> <span id="currentBorrowed"></span></p>
+            <p><strong>Số sách đã trả:</strong> <span id="returned"></span></p>
+            <p><strong>Số sách quá hạn:</strong> <span id="overdue"></span></p>
+        </div>
+        <button id="btnLogout" class="logout-btn">Đăng xuất</button>
+    </section>
+
+    <!-- DANH SÁCH PHIẾU MƯỢN -->
+    <section class="borrow-list">
+        <h2>Danh sách phiếu mượn</h2>
+        <table id="borrowTable">
+            <thead>
+                <tr>
+                    <th>Tên sách</th>
+                    <th>Tác giả</th>
+                    <th>Năm xuất bản</th>
+                    <th>Ngày mượn</th>
+                    <th>Hạn trả</th>
+                    <th>Ngày trả</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody id="borrowTableBody"></tbody>
+        </table>
+    </section>
+
+    <script src="user.js"></script>
+</body>
+</html>

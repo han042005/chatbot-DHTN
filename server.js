@@ -226,7 +226,57 @@ app.post('/phieu-muon/tra/:id', (req, res) => {
         });
     });
 });
+// ================== THÔNG TIN TÀI KHOẢN ==================
+app.get('/user-info/:role/:ma', (req, res) => {
+    const { role, ma } = req.params;
+    let table, idField, selectFields;
 
+    if (role === 'sinh_vien') {
+        table = 'sinh_vien';
+        idField = 'ma_sv';
+        selectFields = 'ma_sv AS ma, email, so_sach_da_muon, so_sach_dang_muon, so_sach_da_tra, so_sach_qua_han';
+    } else if (role === 'giang_vien') {
+        table = 'giang_vien';
+        idField = 'ma_gv';
+        selectFields = 'ma_gv AS ma, email, so_sach_da_muon, so_sach_dang_muon, so_sach_da_tra, so_sach_qua_han';
+    } else {
+        return res.status(400).json({ success: false, message: 'Vai trò không hợp lệ' });
+    }
+
+    // Lấy thông tin người dùng
+    const userSql = `SELECT ${selectFields} FROM ${table} WHERE ${idField} = ?`;
+    db.query(userSql, [ma], (err, userResults) => {
+        if (err) {
+            console.error('Lỗi SQL:', err);
+            return res.status(500).json({ success: false, message: 'Lỗi khi lấy thông tin người dùng', error: err.sqlMessage });
+        }
+        if (userResults.length === 0) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+        }
+
+        // Lấy danh sách phiếu mượn
+        const borrowSql = `
+            SELECT pm.*, s.tac_gia, s.nam_xuat_ban
+            FROM phieu_muon pm
+            JOIN sach s ON pm.id_sach = s.id
+            WHERE pm.${idField} = ?
+        `;
+        db.query(borrowSql, [ma], (err2, borrowResults) => {
+            if (err2) {
+                console.error('Lỗi SQL:', err2);
+                return res.status(500).json({ success: false, message: 'Lỗi khi lấy danh sách phiếu mượn', error: err2.sqlMessage });
+            }
+
+            res.json({
+                success: true,
+                data: {
+                    user: userResults[0],
+                    borrows: borrowResults
+                }
+            });
+        });
+    });
+});
 // ================== NỘI QUY ==================
 app.get('/noi-quy', (req, res) => {
     db.query('SELECT * FROM noi_quy', (err, results) => {
