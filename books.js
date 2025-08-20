@@ -66,7 +66,7 @@ function borrowBook(ten_sach) {
 
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     const han_tra = new Date();
-    han_tra.setDate(han_tra.getDate() + 7); // Hạn trả 7 ngày
+    han_tra.setMonth(han_tra.getMonth() + 5); //Hạn trả = mượn + 5 tháng
     const hanTraStr = han_tra.toISOString().split("T")[0];
 
     console.log("Body gửi đi:", { ma_sv, ma_gv, ten_sach, ngay_muon: today, han_tra: hanTraStr }); // Debug

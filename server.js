@@ -293,6 +293,82 @@ app.get('/co-cau-to-chuc', (req, res) => {
     });
 });
 
+// ================== TỰ ĐỘNG NHẮC HẠN TRẢ BẰNG EMAIL MẶC ĐỊNH ==================
+const cron = require('node-cron');
+const nodemailer = require('nodemailer');
+const moment = require('moment');
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp.office365.com',    
+    port: 587,                
+    secure: false,              
+    auth: {
+        user: '',      
+        pass: ''           
+    }
+});
+
+function sendReminderEmail(to, ten_sach, han_tra, ma_sv) {
+    const mailOptions = {
+        from: '',
+        to,
+        subject: 'Nhắc nhở hạn trả sách',
+        text: `Xin chào SV ${ma_sv},\nBạn cần trả sách "${ten_sach}" trước ngày ${han_tra}.\n⚠️ Lưu ý: Nếu không trả đúng hạn, bạn sẽ bị đánh dấu xấu trong hệ thống.`
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+        if (err) console.error('❌ Lỗi gửi mail:', err);
+        else console.log('✅ Mail nhắc hạn trả đã gửi đến:', to);
+    });
+}
+
+// ================== Cron job nhắc hạn trả ==================
+cron.schedule('0 8 * * *', () => {
+    console.log('🔔 Kiểm tra hạn trả sách ...');
+
+    //const remindDay = moment().add(3, 'days').format('DD-MM-YYYY');
+
+    const sql = `
+        SELECT pm.*, sv.email AS email_sv, gv.email AS email_gv
+        FROM phieu_muon pm
+        LEFT JOIN sinh_vien sv ON pm.ma_sv = sv.ma_sv
+        LEFT JOIN giang_vien gv ON pm.ma_gv = gv.ma_gv
+        WHERE pm.trang_thai = 'dang_muon' AND DATE_SUB(pm.han_tra, INTERVAL 3 DAY) = CURDATE()
+    `;
+
+    db.query(sql, [remindDay], (err, results) => {
+        if (err) return console.error('❌ Lỗi khi kiểm tra hạn trả:', err);
+
+        results.forEach(pm => {
+            const email = pm.email_sv || pm.email_gv;
+            const ma_sv = pm.ma_sv || pm.ma_gv;
+            if (email) sendReminderEmail(email, pm.ten_sach, moment(pm.han_tra).format('DD-MM-YYYY'), ma_sv);
+        });
+    });
+});
+
+// ================== Test gửi mail cho 1 sinh viên ==================
+function testSendMail(ma_sv) {
+    const sql = `
+        SELECT pm.ten_sach, pm.han_tra, sv.email, sv.ma_sv
+        FROM phieu_muon pm
+        JOIN sinh_vien sv ON pm.ma_sv = sv.ma_sv
+        WHERE pm.ma_sv = ? AND pm.trang_thai = 'dang_muon'
+    `;
+
+    db.query(sql, [ma_sv], (err, results) => {
+        if (err) return console.error(err);
+        if (results.length === 0) return console.log('Không có phiếu mượn cần nhắc');
+
+        results.forEach(row => {
+            sendReminderEmail(row.email, row.ten_sach, moment(row.han_tra).format('DD-MM-YYYY'), row.ma_sv);
+        });
+    });
+}
+
+// Gọi test cho sinh viên vừa tạo
+testSendMail('23103054');
+
 // ================== START SERVER ==================
 const PORT = 3000;
 app.listen(PORT, () => console.log(`🚀 Server chạy tại http://localhost:${PORT}`));
