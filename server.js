@@ -48,7 +48,7 @@ app.get('/nganh-hoc', (req, res) => {
 
 // ================== SÁCH ==================
 app.get('/sach', (req, res) => {
-    db.query('SELECT * FROM sach_s', (err, results) => {
+    db.query('SELECT * FROM sach', (err, results) => {
         if (err) throw err;
         res.json(results);
     });
@@ -56,7 +56,7 @@ app.get('/sach', (req, res) => {
 
 app.get('/sach/nganh/:id_nganh', (req, res) => {
     const { id_nganh } = req.params;
-    db.query('SELECT * FROM sach_s WHERE id_nganh = ?', [id_nganh], (err, results) => {
+    db.query('SELECT * FROM sach WHERE id_nganh = ?', [id_nganh], (err, results) => {
         if (err) throw err;
         res.json(results);
     });
@@ -85,7 +85,7 @@ app.get('/phieu-muon/sinh-vien/:ma_sv', (req, res) => {
     const sql = `
         SELECT pm.*, s.tac_gia, s.nam_xuat_ban
         FROM phieu_muon pm
-        JOIN sach_s s ON pm.id_sach = s.id
+        JOIN sach s ON pm.id_sach = s.id
         WHERE pm.ma_sv = ?
     `;
     db.query(sql, [ma_sv], (err, results) => {
@@ -100,7 +100,7 @@ app.get('/phieu-muon/giang-vien/:ma_gv', (req, res) => {
     const sql = `
         SELECT pm.*, s.tac_gia, s.nam_xuat_ban
         FROM phieu_muon pm
-        JOIN sach_s s ON pm.id_sach = s.id
+        JOIN sach s ON pm.id_sach = s.id
         WHERE pm.ma_gv = ?
     `;
     db.query(sql, [ma_gv], (err, results) => {
@@ -143,7 +143,7 @@ const sqlFindBook = `SELECT id, so_luong_ton, tac_gia, nam_xuat_ban FROM sach WH
             const sqlDetail = `
                 SELECT pm.*, s.tac_gia, s.nam_xuat_ban
                 FROM phieu_muon pm
-                JOIN sach_s s ON pm.id_sach_s = s.id
+                JOIN sach s ON pm.id_sach = s.id
                 WHERE pm.id = ?
             `;
             db.query(sqlDetail, [result.insertId], (err3, detail) => {
@@ -223,7 +223,7 @@ app.post('/phieu-muon/tra/:id', (req, res) => {
             if (err2) return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật phiếu mượn', error: err2.sqlMessage });
 
             // 3. Tăng lại số lượng tồn của sách
-            db.query('UPDATE sach_s SET so_luong_ton = so_luong_ton + 1 WHERE id = ?', [phieu.id_sach], (err3) => {
+            db.query('UPDATE sach SET so_luong_ton = so_luong_ton + 1 WHERE id = ?', [phieu.id_sach], (err3) => {
                 if (err3) return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật kho sách', error: err3.sqlMessage });
 
                 res.json({ success: true, message: 'Trả sách thành công' });
@@ -270,7 +270,7 @@ app.post('/admin/add-book', (req, res) => {
         SELECT COLUMN_NAME 
         FROM INFORMATION_SCHEMA.COLUMNS 
         WHERE TABLE_SCHEMA = 'library_chatbot' 
-        AND TABLE_NAME = 'sach_s' 
+        AND TABLE_NAME = 'sach' 
         AND COLUMN_NAME IN ('created_at', 'updated_at')
     `;
     
@@ -286,7 +286,7 @@ app.post('/admin/add-book', (req, res) => {
         if (hasTimestamp) {
             // Thêm sách với timestamp
             const sql = `
-                INSERT INTO sach_s (ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh, created_at, updated_at) 
+                INSERT INTO sach (ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh, created_at, updated_at) 
                 VALUES (?, ?, ?, ?, ?, NOW(), NOW())
             `;
             
@@ -302,7 +302,7 @@ app.post('/admin/add-book', (req, res) => {
                 
                 // Lấy thông tin sách vừa thêm
                 const newBookId = result.insertId;
-                db.query('SELECT * FROM sach_s WHERE id = ?', [newBookId], (err2, books) => {
+                db.query('SELECT * FROM sach WHERE id = ?', [newBookId], (err2, books) => {
                     if (err2) {
                         return res.status(500).json({ 
                             success: false, 
@@ -332,7 +332,7 @@ function insertBookWithoutTimestamp(req, res) {
     const { ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh } = req.body;
     
     const sql = `
-        INSERT INTO sach_s (ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh) 
+        INSERT INTO sach (ten_sach, tac_gia, nam_xuat_ban, so_luong_ton, id_nganh) 
         VALUES (?, ?, ?, ?, ?)
     `;
     
@@ -348,7 +348,7 @@ function insertBookWithoutTimestamp(req, res) {
         
         // Lấy thông tin sách vừa thêm
         const newBookId = result.insertId;
-        db.query('SELECT * FROM sach_s WHERE id = ?', [newBookId], (err2, books) => {
+        db.query('SELECT * FROM sach WHERE id = ?', [newBookId], (err2, books) => {
             if (err2) {
                 return res.status(500).json({ 
                     success: false, 
@@ -377,7 +377,7 @@ app.get("/api/thong-bao-sach", (req, res) => {
     SELECT COLUMN_NAME 
     FROM INFORMATION_SCHEMA.COLUMNS 
     WHERE TABLE_SCHEMA = 'library_chatbot' 
-    AND TABLE_NAME = 'sach_s' 
+    AND TABLE_NAME = 'sach' 
     AND COLUMN_NAME IN ('created_at', 'updated_at')
   `;
   
@@ -395,7 +395,7 @@ app.get("/api/thong-bao-sach", (req, res) => {
       const sql = `
         SELECT id, ten_sach, tac_gia, nam_xuat_ban, so_luong_ton,
                created_at, updated_at
-        FROM sach_s
+        FROM sach
         WHERE COALESCE(updated_at, created_at) >= NOW() - INTERVAL 60 SECOND
         ORDER BY COALESCE(updated_at, created_at) DESC
         LIMIT 10
@@ -425,7 +425,7 @@ app.get("/api/thong-bao-sach", (req, res) => {
 function getBooksWithoutTimestamp(res) {
   const sql = `
     SELECT id, ten_sach, tac_gia, nam_xuat_ban, so_luong_ton
-    FROM sach_s
+    FROM sach
     WHERE so_luong_ton > 0
     ORDER BY id DESC
     LIMIT 10
