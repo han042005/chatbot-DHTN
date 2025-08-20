@@ -45,14 +45,20 @@ function renderBooks(books) {
     });
 }
 function borrowBook(ten_sach) {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (!currentUser || !currentUser.ma) {
-        alert("❌ Vui lòng đăng nhập trước khi mượn sách!");
-        window.location.href = "login.html"; // Chuyển hướng về trang đăng nhập
+    // Kiểm tra Moment.js
+    if (typeof moment === "undefined") {
+        alert("❌ Lỗi: Moment.js không được tải!");
+        console.error("Moment.js không được tải. Vui lòng kiểm tra thẻ <script>.");
         return;
     }
 
-    // Xác định ma_sv hoặc ma_gv dựa vào role
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser || !currentUser.ma) {
+        alert("❌ Vui lòng đăng nhập trước khi mượn sách!");
+        window.location.href = "login.html";
+        return;
+    }
+
     let ma_sv = null;
     let ma_gv = null;
     if (currentUser.role === "sinh_vien") {
@@ -64,32 +70,45 @@ function borrowBook(ten_sach) {
         return;
     }
 
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    const han_tra = new Date();
-    han_tra.setDate(han_tra.getDate() + 7); // Hạn trả 7 ngày
-    const hanTraStr = han_tra.toISOString().split("T")[0];
+    // Tạo ngày trong múi giờ Asia/Ho_Chi_Minh
+    const today = moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD");
+    const han_tra = moment().tz("Asia/Ho_Chi_Minh").add(7, "days").format("YYYY-MM-DD");
 
-    console.log("Body gửi đi:", { ma_sv, ma_gv, ten_sach, ngay_muon: today, han_tra: hanTraStr }); // Debug
+    // Ghi log dữ liệu gửi đi để kiểm tra
+    console.log("Dữ liệu gửi đi:", {
+        ma_sv,
+        ma_gv,
+        ten_sach,
+        ngay_muon: today,
+        han_tra
+    });
 
     fetch("/phieu-muon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ma_sv, ma_gv, ten_sach, ngay_muon: today, han_tra: hanTraStr })
+        body: JSON.stringify({ ma_sv, ma_gv, ten_sach, ngay_muon: today, han_tra })
     })
-    .then(res => res.json())
+    .then(res => {
+        console.log("Phản hồi từ server:", res); // Ghi log phản hồi
+        if (!res.ok) {
+            throw new Error(`Lỗi HTTP! Trạng thái: ${res.status}`);
+        }
+        return res.json();
+    })
     .then(data => {
+        console.log("Dữ liệu phản hồi:", data); // Ghi log dữ liệu JSON
         if (data.success) {
             alert("✅ Mượn sách thành công!");
             const book = allBooks.find(b => b.ten_sach === ten_sach);
             if (book) book.so_luong_ton -= 1;
             renderBooks(allBooks);
         } else {
-            alert("❌ Lỗi: " + data.message);
+            alert(`❌ Lỗi: ${data.message || "Không thể mượn sách!"}`);
         }
     })
     .catch(err => {
         console.error("Lỗi khi mượn sách:", err);
-        alert("❌ Lỗi kết nối server!");
+        alert(`❌ Lỗi kết nối server! Chi tiết: ${err.message}`);
     });
 }
 

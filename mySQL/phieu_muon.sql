@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th8 19, 2025 lúc 04:27 AM
+-- Thời gian đã tạo: Th8 20, 2025 lúc 06:04 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -56,7 +56,34 @@ INSERT INTO `phieu_muon` (`id`, `ma_sv`, `ma_gv`, `id_sach`, `ten_sach`, `tac_gi
 (57, '23103097', NULL, 104, 'Tiến hóa', 'Nguyễn Thị Hạnh', '2017', 'da_tra', '2025-08-19', '2025-08-26', '2025-08-19'),
 (58, '23103097', NULL, 124, 'Linguistics for English Language Teaching', 'David Crystal', '2017', 'da_tra', '2025-08-19', '2025-08-26', '2025-08-19'),
 (59, '23103097', NULL, 61, 'Giáo trình Lý luận Chính trị', 'Nguyễn Văn An', '2018', 'da_tra', '2025-08-19', '2025-08-26', '2025-08-19'),
-(60, '23103097', NULL, 63, 'Lịch sử Đảng Cộng sản Việt Nam', 'Lê Văn Cường', '2020', 'da_tra', '2025-08-19', '2025-08-26', '2025-08-19');
+(60, '23103097', NULL, 63, 'Lịch sử Đảng Cộng sản Việt Nam', 'Lê Văn Cường', '2020', 'da_tra', '2025-08-19', '2025-08-26', '2025-08-19'),
+(61, '23103097', NULL, 21, 'Giải phẫu học', 'Nguyễn Hữu Tùng', '2018', 'da_tra', '2025-08-19', '2025-08-26', '2025-08-19'),
+(62, NULL, 'GV001', 21, 'Giải phẫu học', 'Nguyễn Hữu Tùng', '2018', 'da_tra', '2025-08-19', '2025-08-26', '2025-08-19'),
+(63, NULL, 'GV001', 3, 'Lập trình Python cơ bản', 'Lê Thị Bích Hạnh', '2019', 'da_tra', '2025-08-19', '2025-08-26', '2025-08-19'),
+(64, '23103097', NULL, 15, 'Tài chính doanh nghiệp', 'Phạm Thị Minh', '2019', 'dang_muon', '2025-08-19', '2025-08-26', NULL),
+(65, NULL, NULL, 81, 'Cơ học đại cương', 'Nguyễn Văn An', '2018', 'dang_muon', '2025-08-19', '2025-08-26', NULL),
+(66, NULL, NULL, 84, 'Quang học', 'Nguyễn Thị Hạnh', '2017', 'dang_muon', '2025-08-19', '2025-08-26', NULL),
+(67, NULL, NULL, 81, 'Cơ học đại cương', 'Nguyễn Văn An', '2018', 'dang_muon', '2025-08-19', '2025-08-26', NULL),
+(68, NULL, NULL, 85, 'Vật lý hạt nhân', 'Phạm Thị Mai', '2018', 'dang_muon', '2025-08-19', '2025-08-26', NULL),
+(69, NULL, NULL, 90, 'Vật lý hiện đại', 'Hoàng Thị Nga', '2021', 'dang_muon', '2025-08-19', '2025-08-26', NULL),
+(70, '23103097', NULL, 13, 'Marketing căn bản', 'Lê Văn Long', '2020', 'dang_muon', '2025-08-19', '2025-08-26', NULL),
+(71, '23103097', NULL, 13, 'Marketing căn bản', 'Lê Văn Long', '2020', 'dang_muon', '2025-08-19', '2025-08-26', NULL),
+(72, '23103097', NULL, 13, 'Marketing căn bản', 'Lê Văn Long', '2020', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(73, '23103097', NULL, 17, 'Phân tích đầu tư', 'Nguyễn Hải Đăng', '2022', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(74, '23103097', NULL, 15, 'Tài chính doanh nghiệp', 'Phạm Thị Minh', '2019', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(75, '23103097', NULL, 98, 'Hóa lý', 'Lê Thị Thanh', '2022', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(76, NULL, 'GV001', 32, 'Tâm lý học trẻ em lứa tuổi mầm non', 'Trần Văn Minh', '2019', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(77, NULL, 'GV001', 138, 'Môi trường và phát triển bền vững', 'Lê Thị Thanh', '2022', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(78, NULL, 'GV001', 108, 'Giải phẫu và Sinh lý động vật', 'Lê Thị Thanh', '2022', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(79, NULL, 'GV001', 82, 'Nhiệt học và Nhiệt động lực học', 'Trần Thị Bình', '2019', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(80, NULL, 'GV001', 63, 'Lịch sử Đảng Cộng sản Việt Nam', 'Lê Văn Cường', '2020', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(81, NULL, 'GV001', 21, 'Giải phẫu học', 'Nguyễn Hữu Tùng', '2018', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(82, NULL, 'GV001', 148, 'Giáo dục thể chất mầm non', 'Lê Thị Thanh', '2022', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(83, NULL, 'GV001', 92, 'Hóa học vô cơ 1', 'Trần Thị Bình', '2019', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(84, NULL, 'GV001', 142, 'Giáo dục thể chất ở trường phổ thông', 'Trần Thị Bình', '2019', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(85, NULL, 'GV001', 128, 'English for Academic Purposes', 'R. R. Jordan', '2022', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(86, NULL, 'GV001', 52, 'Từ điển Tiếng Jrai – Tiếng Việt', 'Rơ Châm H’Rê', '2019', 'dang_muon', '2025-08-20', '2025-08-27', NULL),
+(87, NULL, 'GV001', 114, 'Văn học nước ngoài', 'Nguyễn Thị Hạnh', '2017', 'da_tra', '2025-08-20', '2025-08-27', '2025-08-20');
 
 --
 -- Bẫy `phieu_muon`
@@ -149,7 +176,7 @@ ALTER TABLE `phieu_muon`
 -- AUTO_INCREMENT cho bảng `phieu_muon`
 --
 ALTER TABLE `phieu_muon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

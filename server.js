@@ -97,6 +97,7 @@ app.get('/phieu-muon/giang-vien/:ma_gv', (req, res) => {
 // Tạo phiếu mượn (client chỉ cần gửi ten_sach)
 app.post('/phieu-muon', (req, res) => {
     const { ma_sv, ma_gv, ten_sach, ngay_muon, han_tra } = req.body;
+    console.log("Dữ liệu nhận được:", { ma_sv, ma_gv, ten_sach, ngay_muon, han_tra });
 
     if (!ten_sach || !ngay_muon || !han_tra) {
         return res.status(400).json({ success: false, message: 'Thiếu thông tin bắt buộc' });
