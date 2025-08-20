@@ -245,4 +245,4 @@ def get_books(category: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("chat_ai:app", host="127.0.0.1", port=3000, reload=True)
+    uvicorn.run("chat_ai:app", host="127.0.0.1", port=3001, reload=True)

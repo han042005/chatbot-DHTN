@@ -3,6 +3,8 @@ const mysql = require('mysql2');
 const path = require('path');
 const app = express();
 app.use(express.json());
+const cors = require("cors");
+// const fetch = require("node-fetch");
 app.use(express.static(__dirname));
 // ================== KẾT NỐI MYSQL ==================
 const db = mysql.createConnection({
@@ -240,11 +242,12 @@ app.listen(PORT, () => console.log(`🚀 Server chạy tại http://localhost:${
 // server.js
 // server.js
 const { spawn } = require("child_process");
+const PY_PORT = 3001; // <— thêm dòng này
 const py = spawn("python", [
   "-m", "uvicorn",
   "chat_ai:app",
   "--host", "127.0.0.1",
-  "--port", String(PORT),
+  "--port", String(PY_PORT),
   "--reload"
 ], {
   env: { ...process.env, PYTHONIOENCODING: "utf-8" }
@@ -257,9 +260,39 @@ py.stdout.on("data", d => process.stdout.write(`PYTHON: ${d}`));
 py.stderr.on("data", d => process.stderr.write(`PYTHON ERR: ${d}`));
 py.on("close", code => console.log(`Python process exited with code ${code}`));
 
-// ===sachy
-app.get("/goi-y", async (req, res) => {
-  const [rows] = await db.query("SELECT ten_sach, tac_gia, so_luong_ton FROM books");
-  res.send(formatBooksTableHTML(rows));
+
+
+// Proxy /chat
+app.post("/chat", async (req, res) => {
+  console.log("-> /chat body:", req.body);
+  try {
+    const r = await fetch(`http://127.0.0.1:${PY_PORT}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body),
+    });
+    const data = await r.json();
+    res.status(r.status).json(data);
+  } catch (e) {
+    console.error("Proxy /chat error:", e);
+    res.status(500).json({ error: e.message });
+  }
 });
+
+// (Tuỳ chọn) Proxy /books/:category nếu cần dùng
+app.get("/books/:category", async (req, res) => {
+  try {
+    const r = await fetch(`http://127.0.0.1:${PY_PORT}/books/${encodeURIComponent(req.params.category)}`);
+    const data = await r.json();
+    res.status(r.status).json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// // ===sachy
+// app.get("/goi-y", async (req, res) => {
+//   const [rows] = await db.query("SELECT ten_sach, tac_gia, so_luong_ton FROM books");
+//   res.send(formatBooksTableHTML(rows));
+// });
 

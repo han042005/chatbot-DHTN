@@ -34,17 +34,24 @@ CREATE TABLE `sach_kinhte` (
 -- Dữ liệu mẫu cho bảng `sach_kinhte`
 -- --------------------------------------------------------
 
-INSERT INTO `sach_kinhte` (`id`, `ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
-(1, 'Kinh tế học vi mô', 'Nguyễn Thị Lan', 10),
-(2, 'Kinh tế học vĩ mô', 'Trần Văn Khánh', 8),
-(3, 'Marketing căn bản', 'Lê Văn Long', 14),
-(4, 'Quản trị kinh doanh', 'Nguyễn Hoài Nam', 7),
-(5, 'Tài chính doanh nghiệp', 'Phạm Thị Minh', 15),
-(6, 'Kế toán tài chính', 'Hoàng Văn Phúc', 6),
-(7, 'Phân tích đầu tư', 'Nguyễn Hải Đăng', 12),
-(8, 'Quản trị nhân sự', 'Trần Thị Thúy', 9),
-(9, 'Thương mại điện tử', 'Phạm Anh Dũng', 11),
-(10, 'Kinh doanh quốc tế', 'Nguyễn Hữu Phước', 13);
+DELIMITER $$
+
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 2 THEN
+        INSERT INTO sach_kinhte (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- AUTO_INCREMENT cho bảng
+ALTER TABLE `sach_kinhte`
+  MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT,
+  AUTO_INCREMENT = 11;
 
 -- --------------------------------------------------------
 -- AUTO_INCREMENT cho bảng `sach_kinhte`
