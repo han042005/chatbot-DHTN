@@ -18,6 +18,18 @@ CREATE TABLE `gdmn` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 4 THEN
+        INSERT INTO gdmn (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
 INSERT INTO `gdmn` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Phương pháp tổ chức hoạt động vui chơi cho trẻ mầm non', 'Nguyễn Thị Lan', 7),
 ('Tâm lý học trẻ em lứa tuổi mầm non', 'Trần Văn Minh', 12),

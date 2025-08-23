@@ -9,6 +9,21 @@ CREATE TABLE `ngon_ngu_anh` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+DELIMITER $$
+
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 13 THEN
+        INSERT INTO ngon_ngu_anh (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
 INSERT INTO `ngon_ngu_anh` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Linguistics for Language Teaching', 'Carol A. Chapelle', 8),
 ('Ngôn ngữ học ứng dụng', 'Crystal David', 10),

@@ -10,6 +10,19 @@ CREATE TABLE `giaoduc_tieuhoc` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 5 THEN
+        INSERT INTO giaoduc_tieuhoc (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
 INSERT INTO `giaoduc_tieuhoc` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Phương pháp dạy học Toán ở tiểu học', 'Nguyễn Văn An', 8),
 ('Phương pháp dạy học Tiếng Việt ở tiểu học', 'Trần Thị Bình', 9),

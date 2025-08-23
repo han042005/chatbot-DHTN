@@ -10,6 +10,20 @@ CREATE TABLE `supham_toanhoc` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+DELIMITER $$
+
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 8 THEN
+        INSERT INTO supham_toanhoc (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
 INSERT INTO `supham_toanhoc` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Giáo trình Đại số tuyến tính', 'Nguyễn Văn An', 8),
 ('Giáo trình Giải tích 1', 'Trần Thị Bình', 10),

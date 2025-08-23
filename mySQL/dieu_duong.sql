@@ -10,6 +10,18 @@ CREATE TABLE `dieu_duong` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 16 THEN
+        INSERT INTO dieu_duong (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
 INSERT INTO `dieu_duong` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Cơ sở điều dưỡng', 'Nguyễn Văn An', 8),
 ('Kỹ năng chăm sóc người bệnh', 'Trần Thị Bình', 10),

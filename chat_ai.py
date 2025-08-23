@@ -69,12 +69,41 @@ CATEGORY_KEYWORDS = {
     "giaoduc_tieuhoc_jrai": ["giáo dục tiểu học", "sách giáo dục tiểu học", "giáo viên tiểu học", "học sinh tiểu học"],
     "supham_hoahoc": ["sư phạm hóa học", "sách sư phạm hóa học", "giáo viên hóa học", "hóa học"],
     "supham_khoahoc_tunhien": ["sư phạm khoa học tự nhiên", "sách sư phạm khoa học tự nhiên", "giáo viên khoa học tự nhiên", "khoa học tự nhiên"],
+    "supham_sinhhoc":["môn sinh","sinh","sinh học","sinh lý"],
+    "giaoduc_thechat":["thể chất","thể","thể dục","chất","thể thao"],
+    "ngon_ngu_anh":["môn anh","anh","tiếng anh"],
+    "supham_toanhoc":["toán học","môn toán","học toán"],
+    "triet_hoc":["môn triết","triết","sách triết"],
+    "van":["môn văn","văn học","văn","ngữ văn"],
+    "vanhoc":["văn học","văn văn","văn"],
+    "supham_vatly":["môn lý","vật lý","sư phạm vật lý","lý lý"],
+    "xet_nghiem_y_hoc":["xét nghiệm","y học xét nghiệm","xét nghiệm máu"],
+    "sach_yhoc":["sách y","y học","ngành y"]
+
+
+
 }
 
 CATEGORY_TABLE = {
     "cntt": "cong_nghe_thong_tin",           # bảng CNTT bạn đã tạo
     "kinhte": "sach_kinhte",  # bảng Kinh tế
-    "yhoc": "sach_yhoc",      # bảng Y học
+    "yhoc": "sach_yhoc",
+    "dieu_duong":"dieu_duong",
+    "giaoduc_chinhtri":"giaoduc_chinhtri",
+    "supham_hoahoc":"supham_hoahoc",
+    "gdmn":"gdmn",
+    "giaoduc_tieuhoc_jrai":"giaoduc_tieuhoc_jrai",
+    "supham_khoahoc_tunhien":"supham_khoahoc_tunhien",
+    "supham_sinhhoc":"supham_sinhhoc",
+    "giaoduc_thechat":"giaoduc_thechat",
+    "ngon_ngu_anh":"ngon_ngu_anh",
+    "supham_toanhoc":"supham_toanhoc",
+    "triet_hoc":"triet_hoc",
+    "van":"van",
+    "vanhoc":"vanhoc",
+    "supham_vatly":"supham_vatly",
+    "xet_nghiem_y_hoc":"xet_nghiem_y_hoc",
+    "sach_yhoc":"sach_yhoc"
 }
 
 # ===== NEW: formatter bảng đơn giản (markdown) =====
@@ -241,6 +270,7 @@ def get_books(category: str):
             {"ten_sach": r[0], "tac_gia": r[1], "so_luong_ton": r[2]} for r in rows
         ]
     }
+
 
 
 if __name__ == "__main__":
