@@ -10,6 +10,21 @@ CREATE TABLE `supham_nguvan` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+DELIMITER $$
+
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 12 THEN
+        INSERT INTO supham_nguvan (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
 INSERT INTO `supham_nguvan` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Lý luận văn học', 'Nguyễn Văn An', 8),
 ('Văn học Việt Nam trung đại', 'Trần Thị Bình', 10),

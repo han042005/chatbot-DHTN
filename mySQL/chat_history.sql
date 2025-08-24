@@ -1,0 +1,11 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+CREATE TABLE chat_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_message TEXT NOT NULL,
+    bot_response TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

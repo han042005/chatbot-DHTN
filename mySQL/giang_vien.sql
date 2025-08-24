@@ -38,9 +38,11 @@ CREATE TABLE `giang_vien` (
   `so_sach_qua_han` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
 --
 -- Đang đổ dữ liệu cho bảng `giang_vien`
 --
+
 
 INSERT INTO `giang_vien` (`id`, `ma_gv`, `mat_khau`, `email`, `so_sach_da_muon`, `so_sach_dang_muon`, `so_sach_da_tra`, `so_sach_qua_han`) VALUES
 (1, 'GV001', '123456', 'gv001@example.com', 10, 2, 8, 1),

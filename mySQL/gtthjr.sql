@@ -10,6 +10,18 @@ CREATE TABLE `giaoduc_tieuhoc_jrai` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 6 THEN
+        INSERT INTO giaoduc_tieuhoc_jrai (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
 INSERT INTO `giaoduc_tieuhoc_jrai` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Giáo trình Tiếng Jrai cơ bản', 'Ksor H’Blêu', 9),
 ('Từ điển Tiếng Jrai – Tiếng Việt', 'Rơ Châm H’Rê', 10),

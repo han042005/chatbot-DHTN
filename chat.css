@@ -1,0 +1,13 @@
+body { font-family: Arial, sans-serif; max-width: 720px; margin: 40px auto; }
+    #log { border: 1px solid #ddd; padding: 12px; height: 360px; overflow-y: auto; border-radius: 8px; background: #fafafa; }
+    .me { color: #1976d2; margin: 6px 0; }
+    .bot { color: #2e7d32; margin: 6px 0; }
+    form { display: flex; gap: 8px; margin-top: 12px; }
+    input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 10px 16px; border: 0; background: #1976d2; color: white; border-radius: 6px; cursor: pointer; }
+    button:hover { opacity: .9; }
+
+    table { border-collapse: collapse; margin-top: 6px; width: 100%; }
+    table, th, td { border: 1px solid #ccc; }
+    th, td { padding: 6px 8px; text-align: left; }
+    th { background: #f0f0f0; }

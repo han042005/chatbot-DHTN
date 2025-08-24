@@ -9,6 +9,21 @@ CREATE TABLE `xet_nghiem_y_hoc` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+DELIMITER $$
+
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 17 THEN
+        INSERT INTO xet_nghiem_y_hoc (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
+
 INSERT INTO `xet_nghiem_y_hoc` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Kỹ thuật xét nghiệm cơ bản', 'Nguyễn Văn An', 8),
 ('Hóa sinh lâm sàng', 'Trần Thị Bình', 10),

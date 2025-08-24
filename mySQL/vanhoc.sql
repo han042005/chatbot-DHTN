@@ -9,6 +9,22 @@ CREATE TABLE `van_hoc` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+
+DELIMITER $$
+
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 20 THEN
+        INSERT INTO van_hoc (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
 INSERT INTO `van_hoc` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Văn học Việt Nam đại cương', 'Nguyễn Văn An', 8),
 ('Tiểu thuyết Việt Nam hiện đại', 'Trần Thị Bình', 10),

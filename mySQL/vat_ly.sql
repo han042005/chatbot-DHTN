@@ -9,6 +9,20 @@ CREATE TABLE `supham_vatly` (
     `so_luong_ton` INT(11) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DELIMITER $$
+
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 9 THEN
+        INSERT INTO supham_vatly (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
+
 
 INSERT INTO `supham_vatly` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Cơ học đại cương', 'Nguyễn Văn An', 9),

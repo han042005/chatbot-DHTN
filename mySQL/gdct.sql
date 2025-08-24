@@ -9,6 +9,17 @@ CREATE TABLE `giaoduc_chinhtri` (
     `so_luong_ton` INT(11) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 7 THEN
+        INSERT INTO giaoduc_chinhtri (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
 
 INSERT INTO `giaoduc_chinhtri` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Giáo trình Lý luận Chính trị', 'Nguyễn Văn An', 10),

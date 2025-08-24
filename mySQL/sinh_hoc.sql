@@ -8,7 +8,22 @@ CREATE TABLE `supham_sinhhoc` (
     `tac_gia` VARCHAR(150) NOT NULL,
     `so_luong_ton` INT(11) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;4
+
+
+DELIMITER $$
+
+CREATE TRIGGER after_insert_sach_kinhte
+AFTER INSERT ON sach
+FOR EACH ROW
+BEGIN
+    IF NEW.id_nganh = 11 THEN
+        INSERT INTO supham_sinhhoc (id, ten_sach, tac_gia, so_luong_ton)
+        VALUES (NEW.id, NEW.ten_sach, NEW.tac_gia, NEW.so_luong_ton);
+    END IF;
+END$$
+
+DELIMITER ;
 
 INSERT INTO `supham_sinhhoc` (`ten_sach`, `tac_gia`, `so_luong_ton`) VALUES
 ('Sinh học đại cương', 'Nguyễn Văn An', 8),
